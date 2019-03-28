@@ -29,9 +29,6 @@
     if (self) {
         
         self.backgroundColor = [UIColor whiteColor];
-        
-        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureAction:)];
-        [self addGestureRecognizer:tapGesture];
     }
     return self;
 }
@@ -44,6 +41,14 @@
     ViewController *currentVC = (ViewController *)self.nextResponder;
     currentVC.printPoint = point;
     if ([self.topView pointInside:point withEvent:event]) {
+        
+        CGPoint topPoint = [self convertPoint:point toView:self.topView];
+        if (CGRectContainsPoint(self.topView.leftBtnFrame, topPoint)) {
+            return self.topView;
+        } else if (CGRectContainsPoint(self.topView.rightBtnFrame, topPoint)) {
+            return self.topView;
+        }
+        
         self.scrollView.scrollEnabled = NO;
         if (self.scrollView.contentOffset.x < kScreen_Width *0.5) {
             return self.firstTableView;
@@ -54,6 +59,13 @@
         self.scrollView.scrollEnabled = YES;
         return [super hitTest:point withEvent:event];
     }
+}
+
+- (void)setTopView:(TopView *)topView{
+
+    _topView = topView;
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureAction:)];
+    [_topView addGestureRecognizer:tapGesture];
 }
 
 
